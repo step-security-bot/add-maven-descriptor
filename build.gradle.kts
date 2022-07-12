@@ -28,32 +28,10 @@ localrepo?.let {
 	}
 	val maven_repo_local by extra(rootGradle.startParameter.currentDir.resolve(it).normalize().absolutePath)
 }
-
 val maven_repo_local: String? by extra
+
 repositories {
 	mavenCentral()
-}
-
-if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
-	val jpmsOptions by extra(listOf(
-		"--add-opens=java.base/java.lang=ALL-UNNAMED",
-		"--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
-		"--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
-		"--add-opens=java.base/java.io=ALL-UNNAMED",
-		"--add-opens=java.base/java.net=ALL-UNNAMED",
-		"--add-opens=java.base/java.nio=ALL-UNNAMED",
-		"--add-opens=java.base/java.util=ALL-UNNAMED",
-		"--add-opens=java.base/java.util.jar=ALL-UNNAMED",
-		"--add-opens=java.base/java.util.regex=ALL-UNNAMED",
-		"--add-opens=java.base/java.util.zip=ALL-UNNAMED",
-		"--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
-		"--add-opens=java.base/sun.net.www.protocol.file=ALL-UNNAMED",
-		"--add-opens=java.base/sun.net.www.protocol.ftp=ALL-UNNAMED",
-		"--add-opens=java.base/sun.net.www.protocol.http=ALL-UNNAMED",
-		"--add-opens=java.base/sun.net.www.protocol.https=ALL-UNNAMED",
-		"--add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED",
-		"--add-opens=java.base/sun.net.www.protocol.jrt=ALL-UNNAMED"
-	))
 }
 
 // SourceSet for Kotlin DSL code so that it can be built after the main SourceSet
@@ -105,7 +83,7 @@ pluginBundle {
 	website = "https://github.com/bjhargrave/add-maven-descriptor"
 	vcsUrl = "https://github.com/bjhargrave/add-maven-descriptor.git"
 	description = "Gradle Plugin to add Maven descriptor information to built jars."
-	tags = listOf("maven")
+	tags = listOf("maven", "pom")
 }
 
 publishing {
@@ -162,14 +140,6 @@ publishing {
 				}
 			}
 		}
-	}
-}
-
-// Handle JPMS options
-val jpmsOptions: List<String>? by extra
-jpmsOptions?.let {
-	tasks.withType<GroovyCompile>().configureEach {
-		groovyOptions.fork(mapOf("jvmArgs" to it))
 	}
 }
 
