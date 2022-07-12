@@ -24,7 +24,7 @@ We use [GitHub Actions](https://github.com/bjhargrave/add-maven-descriptor/actio
 ## Workflow
 
 We use [git triangular workflow](https://github.blog/2015-07-29-git-2-5-including-multiple-worktrees-and-triangular-workflows/).
-This means that no one, not even the maintainers, push contributions directly into the [main repo](https://github.com/eclipse/transformer). All contribution come in through pull requests.
+This means that no one, not even the maintainers, push contributions directly into the [main repo](https://github.com/bjhargrave/add-maven-descriptor). All contribution come in through pull requests.
 So each contributor will need to [fork the main repo](https://github.com/bjhargrave/add-maven-descriptor/fork)
 on GitHub. All contributions are made as commits to your fork. Then you submit a
 pull request to have them considered for merging into the main repo.
