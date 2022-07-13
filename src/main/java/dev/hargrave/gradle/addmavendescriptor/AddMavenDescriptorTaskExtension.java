@@ -54,6 +54,12 @@ public class AddMavenDescriptorTaskExtension {
 		// Publication for publication name
 		this.publication = getPublicationName().flatMap(pluginExtension.publications()::named);
 
+		// need to programmatically add to inputs since @Input in an
+		// extension is not processed
+		task.getInputs()
+			.property("publicationName", getPublicationName())
+			.optional(true);
+
 		// Configure the task
 		configureTask(task);
 	}
@@ -103,12 +109,6 @@ public class AddMavenDescriptorTaskExtension {
 		task.into(metaInfMaven, copySpec -> copySpec.from(generatePomPropertiesTaskName().flatMap(taskProvider)
 				.orElse(Collections.emptyList()))
 			.rename(name -> "pom.properties"));
-
-		// need to programmatically add to inputs since @Input in an
-		// extension is not processed
-		task.getInputs()
-			.property("publicationName", getPublicationName())
-			.optional(true);
 	}
 
 	/**
