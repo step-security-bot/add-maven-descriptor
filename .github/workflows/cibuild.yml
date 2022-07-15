@@ -39,6 +39,7 @@ jobs:
         - '8'
         - '11'
         - '17'
+        - '18'
     name: Build JDK${{ matrix.java }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
