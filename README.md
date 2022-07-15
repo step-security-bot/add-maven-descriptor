@@ -75,7 +75,8 @@ tasks.named("jar") {
 
 This plugin requires at least Gradle 6.1 for Java 8 to Java 15,
 at least Gradle 7.0 for Java 16,
-and at least Gradle 7.3 for Java 17.
+at least Gradle 7.3 for Java 17,
+and at least Gradle 7.5 for Java 18.
 
 
 [1]: https://maven.apache.org/shared/maven-archiver/index.html
