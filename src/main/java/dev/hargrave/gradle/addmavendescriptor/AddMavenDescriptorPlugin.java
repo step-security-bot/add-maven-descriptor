@@ -21,6 +21,11 @@ public class AddMavenDescriptorPlugin implements Plugin<Project> {
 	public static final String PLUGINID = "dev.hargrave.addmavendescriptor";
 
 	/**
+	 * Default public constructor.
+	 */
+	public AddMavenDescriptorPlugin() {}
+
+	/**
 	 * Apply the plugin to the specified project.
 	 */
 	@Override
