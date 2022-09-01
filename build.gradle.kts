@@ -61,7 +61,6 @@ configurations {
 
 // Dependencies
 dependencies {
-	compileOnly(localGroovy())
 	testImplementation("org.spockframework:spock-core:2.2-groovy-3.0")
 	testImplementation("biz.aQute.bnd:biz.aQute.bndlib:6.3.1")
 }
