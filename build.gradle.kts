@@ -62,7 +62,7 @@ configurations {
 // Dependencies
 dependencies {
 	testImplementation("org.spockframework:spock-core:2.3-groovy-3.0")
-	testImplementation("biz.aQute.bnd:biz.aQute.bndlib:6.3.1")
+	testImplementation("biz.aQute.bnd:biz.aQute.bndlib:6.4.0")
 }
 
 // Gradle plugin descriptions
