@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import java.util.*
 
 plugins {
@@ -26,7 +29,7 @@ localrepo?.let {
 	while (rootGradle.parent != null) {
 		rootGradle = rootGradle.parent!!
 	}
-	val maven_repo_local by extra(rootGradle.startParameter.currentDir.resolve(it).normalize().absolutePath)
+	extra.set("maven_repo_local", rootGradle.startParameter.currentDir.resolve(it).normalize().absolutePath)
 }
 val maven_repo_local: String? by extra
 
@@ -48,13 +51,16 @@ sourceSets {
 }
 
 configurations {
-	val dslCompileOnly by existing {
+	val dslCompileOnly by existing
+	dslCompileOnly {
 		extendsFrom(compileOnly.get())
 	}
-	val dslImplementation by existing {
+	val dslImplementation by existing
+	dslImplementation {
 		extendsFrom(implementation.get())
 	}
-	val dslRuntimeOnly by existing {
+	val dslRuntimeOnly by existing
+	dslRuntimeOnly {
 		extendsFrom(runtimeOnly.get())
 	}
 }
@@ -67,22 +73,17 @@ dependencies {
 
 // Gradle plugin descriptions
 gradlePlugin {
+	website.set("https://github.com/bjhargrave/add-maven-descriptor")
+	vcsUrl.set("https://github.com/bjhargrave/add-maven-descriptor.git")
 	plugins {
 		create("AddMavenDescriptor") {
 			id = "dev.hargrave.addmavendescriptor"
 			implementationClass = "dev.hargrave.gradle.addmavendescriptor.AddMavenDescriptorPlugin"
 			displayName = "Add Maven Descriptor Plugin"
 			description = "Gradle Plugin to add Maven descriptor information to built jars."
+			tags.set(listOf("maven", "pom"))
 		}
 	}
-}
-
-// Gradle plugin bundle description
-pluginBundle {
-	website = "https://github.com/bjhargrave/add-maven-descriptor"
-	vcsUrl = "https://github.com/bjhargrave/add-maven-descriptor.git"
-	description = "Gradle Plugin to add Maven descriptor information to built jars."
-	tags = listOf("maven", "pom")
 }
 
 publishing {
@@ -94,10 +95,12 @@ publishing {
 				description.set("Add Maven Descriptor")
 			}
 			val publication = this
-			tasks.register<WriteProperties>("generatePomPropertiesFor${publication.name.capitalize()}Publication") {
+			tasks.register<WriteProperties>("generatePomPropertiesFor${publication.name.replaceFirstChar {
+				it.titlecase(Locale.ROOT)
+			}}Publication") {
 				description = "Generates the Maven pom.properties file for publication '${publication.name}'."
 				group = PublishingPlugin.PUBLISH_TASK_GROUP
-				setOutputFile(layout.buildDirectory.file("publications/${publication.name}/pom-default.properties"))
+				getDestinationFile().value(layout.buildDirectory.file("publications/${publication.name}/pom-default.properties"))
 				property("groupId", provider { publication.groupId })
 				property("artifactId", provider { publication.artifactId })
 				property("version", provider { publication.version })
@@ -139,6 +142,13 @@ publishing {
 				}
 			}
 		}
+	}
+}
+
+// Use same jvm target for kotlin code as for java code
+tasks.withType<KotlinCompilationTask<KotlinJvmCompilerOptions>>().configureEach {
+	compilerOptions {
+		jvmTarget.set(JvmTarget.fromTarget(java.targetCompatibility.toString()))
 	}
 }
 
@@ -209,7 +219,7 @@ tasks.test {
 	}
 	val testresourcesSource = layout.projectDirectory.dir("testresources")
 	inputs.files(testresourcesSource).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("testresources")
-	systemProperty("org.gradle.warning.mode", gradle.startParameter.warningMode.name.toLowerCase(Locale.ROOT))
+	systemProperty("org.gradle.warning.mode", gradle.startParameter.warningMode.name.lowercase(Locale.ROOT))
 	maven_repo_local?.let {
 		systemProperty("maven.repo.local", it)
 	}

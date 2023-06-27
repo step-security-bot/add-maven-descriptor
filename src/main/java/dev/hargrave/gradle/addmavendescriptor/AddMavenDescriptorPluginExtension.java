@@ -1,18 +1,22 @@
 package dev.hargrave.gradle.addmavendescriptor;
 
 import java.util.SortedSet;
+import java.util.function.BiConsumer;
 
 import org.gradle.api.NamedDomainObjectSet;
 import org.gradle.api.Project;
 import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.WriteProperties;
+import org.gradle.util.GradleVersion;
 
 /**
  * Plugin extension to specify the MavenPublication name to
@@ -108,6 +112,11 @@ public class AddMavenDescriptorPluginExtension {
 		ProjectLayout layout = project.getLayout();
 		ProviderFactory providers = project.getProviders();
 
+		@SuppressWarnings("deprecation")
+		BiConsumer<WriteProperties, Provider<RegularFile>> setDestinationFile = isGradleCompatible("8.1") ? //
+			(task, destinationFile) -> task.getDestinationFile()
+				.value(destinationFile) : //
+			(task, destinationFile) -> task.setOutputFile(destinationFile);
 		// Register generatePomProperties task for each MavenPublication
 		publications().configureEach(publication -> {
 			String pomPropertiesTaskName = "generatePomPropertiesFor" + capitalize(publication.getName()) + "Publication";
@@ -115,7 +124,7 @@ public class AddMavenDescriptorPluginExtension {
 				String publicationName = publication.getName();
 				task.setDescription("Generates the Maven pom.properties file for publication '" + publicationName + "'.");
 				task.setGroup(PublishingPlugin.PUBLISH_TASK_GROUP);
-				task.setOutputFile(layout.getBuildDirectory()
+				setDestinationFile.accept(task, layout.getBuildDirectory()
 					.file("publications/" + publicationName + "/pom-default.properties"));
 				task.property("groupId", providers.provider(publication::getGroupId));
 				task.property("artifactId", providers.provider(publication::getArtifactId));
@@ -147,5 +156,16 @@ public class AddMavenDescriptorPluginExtension {
 			codePoints[count] = codePoint = string.codePointAt(index);
 		}
 		return new String(codePoints, 0, count);
+	}
+
+	/**
+	 * Return whether the current Gradle is at least the specified version.
+	 *
+	 * @param requestedVersion The requested Gradle version.
+	 * @return Whether the current Gradle is at least the specified version.
+	 */
+	static boolean isGradleCompatible(String requestedVersion) {
+		return GradleVersion.current()
+			.compareTo(GradleVersion.version(requestedVersion)) >= 0;
 	}
 }
