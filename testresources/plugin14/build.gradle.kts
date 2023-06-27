@@ -7,7 +7,7 @@ plugins {
 	id("dev.hargrave.addmavendescriptor")
 	groovy
 	`kotlin-dsl`
-	id("com.gradle.plugin-publish") version "1.0.0"
+	id("com.gradle.plugin-publish") version "1.2.0"
 }
 
 group = "test.addmavendescriptor.gradle"
@@ -25,22 +25,17 @@ dependencies {
 
 // Gradle plugin description
 gradlePlugin {
+	website.set("https://github.com/bjhargrave/add-maven-descriptor")
+	vcsUrl.set("https://github.com/bjhargrave/add-maven-descriptor.git")
 	plugins {
 		create("Test") {
 			id = "test.addmavendescriptor.gradle"
 			implementationClass = "doubler.impl.DoublerImpl"
 			displayName = "Test Gradle Plugin"
 			description = "Gradle Plugin for a test."
+			tags.set(listOf("gradle", "maven"))
 		}
 	}
-}
-
-// Gradle plugin bundle description
-pluginBundle {
-	website = "https://github.com/bjhargrave/add-maven-descriptor"
-	vcsUrl = "https://github.com/bjhargrave/add-maven-descriptor.git"
-	description = "Gradle Plugin for a test."
-	tags = listOf("gradle", "maven")
 }
 
 publishing {

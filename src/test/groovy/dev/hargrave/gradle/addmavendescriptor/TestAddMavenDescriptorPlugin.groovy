@@ -796,7 +796,7 @@ class TestAddMavenDescriptorPlugin extends Specification {
 
 		when:
 		UTF8Properties props = new UTF8Properties()
-		def result = TestHelper.getGradleRunner()
+		def result = TestHelper.getGradleRunner("7.6")
 			.withProjectDir(testProjectDir)
 			.withArguments("--parallel", "--stacktrace", "--debug", "build")
 			.withPluginClasspath()
@@ -842,7 +842,7 @@ class TestAddMavenDescriptorPlugin extends Specification {
 		jartask_jar.close()
 
 		when:
-		result = TestHelper.getGradleRunner()
+		result = TestHelper.getGradleRunner("7.6")
 			.withProjectDir(testProjectDir)
 			.withArguments("--parallel", "--stacktrace", "--debug", "build")
 			.withPluginClasspath()
