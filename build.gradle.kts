@@ -38,35 +38,34 @@ repositories {
 }
 
 // SourceSet for Kotlin DSL code so that it can be built after the main SourceSet
-val dsl by sourceSets.registering
+val dsl: SourceSet by sourceSets.creating
 sourceSets {
-	dsl {
+	dsl.apply {
 		compileClasspath += main.get().output
 		runtimeClasspath += main.get().output
 	}
 	test {
-		compileClasspath += dsl.get().output
-		runtimeClasspath += dsl.get().output
+		compileClasspath += dsl.output
+		runtimeClasspath += dsl.output
 	}
 }
 
 configurations {
-	val dslCompileOnly by existing
-	dslCompileOnly {
+	dsl.compileOnlyConfigurationName {
 		extendsFrom(compileOnly.get())
 	}
-	val dslImplementation by existing
-	dslImplementation {
+	dsl.implementationConfigurationName {
 		extendsFrom(implementation.get())
 	}
-	val dslRuntimeOnly by existing
-	dslRuntimeOnly {
+	dsl.runtimeOnlyConfigurationName {
 		extendsFrom(runtimeOnly.get())
 	}
 }
 
 // Dependencies
 dependencies {
+	testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testImplementation("org.spockframework:spock-core:2.3-groovy-3.0")
 	testImplementation("biz.aQute.bnd:biz.aQute.bndlib:6.4.1")
 }
@@ -173,12 +172,12 @@ tasks.withType<Javadoc>().configureEach {
 
 tasks.pluginUnderTestMetadata {
 	// Include dsl SourceSet
-	pluginClasspath.from(dsl.get().output)
+	pluginClasspath.from(dsl.output)
 }
 
 tasks.jar {
 	// Include dsl SourceSet
-	from(dsl.get().output)
+	from(dsl.output)
 	// META-INF/maven folder
 	val metaInfMaven = publishing.publications.named<MavenPublication>("pluginMaven").map {
 		"META-INF/maven/${it.groupId}/${it.artifactId}"
@@ -197,7 +196,7 @@ tasks.jar {
 
 tasks.named<Jar>("sourcesJar") {
 	// Include dsl SourceSet
-	from(dsl.get().allSource)
+	from(dsl.allSource)
 }
 
 val testresourcesOutput = layout.buildDirectory.dir("testresources")
@@ -238,4 +237,9 @@ tasks.test {
 
 tasks.named<Delete>("cleanTest") {
 	delete(testresourcesOutput)
+}
+
+tasks.withType<ValidatePlugins>().configureEach {
+	failOnWarning.set(true)
+	enableStricterValidation.set(true)
 }
