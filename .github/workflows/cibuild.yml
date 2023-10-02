@@ -57,7 +57,7 @@ jobs:
         java-version: ${{ matrix.java }}
     - name: Build
       id: build
-      uses: gradle/gradle-build-action@b5126f31dbc19dd434c3269bf8c28c315e121da2
+      uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a
       with:
         cache-read-only: ${{ github.ref != 'refs/heads/main' }}
         arguments: build
