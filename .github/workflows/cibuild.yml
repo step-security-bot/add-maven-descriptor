@@ -50,14 +50,16 @@ jobs:
 
     - name: Git Checkout
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-    - name: Set up Java ${{ matrix.java }}
+    - name: Setup Java ${{ matrix.java }}
       uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
-    - name: Build
-      id: build
-      uses: gradle/gradle-build-action@3b1b3b9a2104c2b47fbae53f3938079c00c9bb87
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@ec92e829475ac0c2315ea8f9eced72db85bb337a
       with:
         cache-read-only: ${{ github.ref != 'refs/heads/main' }}
-        arguments: build
+    - name: Build
+      id: build
+      run: |
+        ./gradlew build
