@@ -1,0 +1,42 @@
+name: 'Dependency Submission'
+
+on:
+  push:
+    branches:
+    - 'main'
+
+env:
+  LC_ALL: en_US.UTF-8
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: write
+
+jobs:
+  dependency-submission:
+    strategy:
+      matrix:
+        os:
+        - 'ubuntu-latest'
+        java:
+        - '17'
+    name: Submit Dependencies
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142
+      with:
+        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+    - name: Git Checkout
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+    - name: Setup Java ${{ matrix.java }}
+      uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9
+      with:
+        distribution: 'temurin'
+        java-version: ${{ matrix.java }}
+    - name: Generate and submit dependency graph
+      uses: gradle/actions/dependency-submission@750cdda3edd6d51b7fdfc069d2e2818cf3c44f4c
