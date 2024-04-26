@@ -46,4 +46,4 @@ jobs:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
     - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@750cdda3edd6d51b7fdfc069d2e2818cf3c44f4c
+      uses: gradle/actions/dependency-submission@db19848a5fa7950289d3668fb053140cf3028d43
